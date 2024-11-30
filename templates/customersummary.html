@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+{% block content %}
+<body>
+    <h3 class="logo">Customer's service request summary</h3>
+    
+        <h4>{{current_user.full_name}}'s total number of inprogress service request : {{tpr}}/{{tpr+tor+tcr}}</h4>
+        <h4>{{current_user.full_name}}'s total number of service request to be accepted by professionals : {{tor}}/{{tpr+tor+tcr}}</h4>
+        <h4>{{current_user.full_name}}'s total number of completed service request : {{tcr}}/{{tpr+tor+tcr}}</h4>
+   
+</body>
+    
+{% endblock %}

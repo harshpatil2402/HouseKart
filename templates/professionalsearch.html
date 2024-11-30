@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="dropdown">
+    <div class="container mt-5">
+        <form class="d-flex" method="POST" action="{{ url_for('professionalsearch') }}">
+            <select class="form-select me-2" name="search_by" aria-label="Search By">
+              <option value="location">Location</option>
+              <option value="name">Name</option>
+              <option value="pincode">Pincode</option>
+            </select>
+            <input class="form-control me-2" type="text" name="search_query" placeholder="Search" aria-label="Search" required>
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+          
+      </div>
+  </div>
+  <table class="table table-striped table-bordered ">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Customer Name</th>
+            <th>Contact Number</th>
+            <th>Address</th>
+            <th>Pincode</th>
+            <th>Date</th>
+            <th>Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for result in results %}
+            <tr>
+                <td><a class="ml-1" href= "#" >{{ result.id }}</a></td>
+                <td>{{ result.servicecustomer.full_name }}</td>
+                <td>{{ result.servicecustomer.contact }}</td>
+                <td>{{ result.servicecustomer.address }}</td>
+                <td>{{ result.servicecustomer.pincode }}</td>
+                <td>{{ result.request_date }}</td>
+                <td>{{ result.reviews.ratings }}</td>
+                
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

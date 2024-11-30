@@ -1,0 +1,160 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h3 class="logo">Services</h3>
+<table class="table table-bordered ">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Service Name</th>
+            <th>Base Price(in Rs)</th>
+            <th>Time Required(in hrs)</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for service in services %}
+            <tr>
+                <td><a class="ml-1" href= "#" >{{ service.id }}</a></td>
+                <td>{{ service.service_type }}</td>
+                <td>{{ service.base_price }}</td>
+                <td>{{ service.time_required }}</td>
+                <td>
+                    <form action="{{ url_for('adminhome') }}" method="POST" style="display:inline;">  
+                        <input type="hidden" name="service_id" value="{{ service.id }}">  
+                        <button type="submit" name="action2" value="edit" class="btn btn-success btn-sm">Edit</button>  
+                        <button type="submit" name="action2" value="delete" class="btn btn-danger btn-sm">Delete</button>  
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<form action="{{ url_for('adminhome') }}" method="POST" style="display:inline;">
+    <button type="submit" name="action" value="addservice" class="btn btn-info btn-sm">Add a New Service</button>
+</form>
+
+<hr>
+<h3 class="logo">Customers</h3>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Date of account creation</th>
+            <th>Contact Number</th>
+            <th>address</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for customer in customers %}
+            <tr>
+                <td><a class="ml-1" href= "#" >{{ customer.id }}</a></td>
+                <td>{{ customer.full_name }}</td>
+                <td>{{ customer.date_created }}</td>
+                <td>{{ customer.contact }}</td>
+                <td>{{ customer.address }}</td>
+                <td>
+                    {% if ((customer.id,) not in blocked_customer) %}
+                        <form action="#" method="POST" style="display:inline;">
+                            <input type="hidden" name="customer_id" value="{{ customer.id }}">
+                            <button type="submit" name="blockcustomer" value="blockcustomer" class="btn btn-danger btn-sm">Block</button>
+                        </form>
+                    
+                        
+                    {% elif ((customer.id,) in blocked_customer) %}
+                    <form action="#" method="POST" style="display:inline;">
+                        <input type="hidden" name="unblock_customer_id" value="{{ customer.id }}">
+                        <button type="submit" name="unblockcustomer" value="unblockcustomer" class="btn btn-warning btn-sm">Unblock</button>
+                    </form>
+                        
+                    {% endif %}
+                    
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+<h3 class="logo">Professionals</h3>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Experience</th>
+            <th>Service Name</th>
+            <th>Service Description</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for professional in professionals %}
+            <tr>
+                <td><a class="ml-1" href= "#" >{{ professional.id }}</a></td>
+                <td>{{professional.full_name }}</td>
+                <td>{{ professional.experience }}</td>
+                <td>{{ professional.service_type }}</td>
+                <td>{{ professional.service_description }}</td>
+                <td>
+                    {% if ((professional.id,) in approved_professional) and ((professional.id,) not in blocked_professional) %}
+                        <form action="#" method="POST" style="display:inline;">
+                            <input type="hidden" name="professional_id" value="{{ professional.id }}">
+                            <button type="submit" name="blockprof" value="blockprof" class="btn btn-danger btn-sm">Block</button>
+                        </form>
+                    
+                        
+                    {% elif (professional.id,) in blocked_professional  %}
+                    <form action="#" method="POST" style="display:inline;">
+                        <input type="hidden" name="unblockprofessional_id" value="{{ professional.id }}">
+                        <button type="submit" name="unblockprof" value="unblockprof" class="btn btn-warning btn-sm">Unblock</button>
+                    </form>
+                    
+                    {% else %}
+                        <form action="#" method="POST" style="display:inline;">
+                            <input type="hidden" name="approve_professional_id" value="{{ professional.id }}">
+                            <button type="submit" name="profapproval" value="approve" class="btn btn-success btn-sm">Approve</button>
+                            <button type="submit" name="profapproval" value="reject" class="btn btn-warning btn-sm">Reject</button>
+                        </form>
+                    {% endif %}
+                    
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<hr>
+<h3 class="logo">Service Requests</h3>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Assigned Professional</th>
+            <th>Customer</th>
+            <th>Service Type</th>
+            <th>Service Description</th>
+            <th>Request Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for service_request in service_requests %}
+            <tr>
+                <td><a class="ml-1" href= "#" >{{ service_request.id }}</a></td>
+                <td>{{ service_request.serviceprofessional.full_name }}</td>
+                <td>{{ service_request.servicecustomer.full_name }}</td>
+                <td>{{ service_request.serviceprofessional.service_type }}</td>
+                <td>{{ service_request.serviceprofessional.service_description }}</td>
+                <td>{{ service_request.request_date }}</td>
+                <td>{{ service_request.service_status }}</td>
+                
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+

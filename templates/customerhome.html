@@ -1,0 +1,90 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% if clicked_button %}
+<h3 class="logo">Book Services</h3>
+<table class="table table-striped table-bordered ">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Service Description</th>
+            <th>Base Price</th>
+            <th>Ratings</th>
+            <th>Book</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for professional, base_price, avg_rating in query_result %}
+            <tr>
+                <td><a class="ml-1" href= "#" >{{ professional.full_name }}</a></td>
+                <td>{{ professional.service_description }}</td>
+                <td>{{ base_price }}</td>
+                <td>{{ avg_rating }}</td>
+
+                <td><form action="#" method="POST" style="display:inline;">
+                    <input type="hidden" name="professional_book_id" value="{{ professional.id }}">
+                    <input type="hidden" name="service_book_type" value="{{ professional.service_type }}">
+                    <button type="submit" name="bookservice" value="bookservice" class="btn btn-info btn-sm">Book Now</button>
+                </form></td>
+                
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="container mt-4">
+    <h2 class="logo">Are you looking for any of the following service today ?</h2>
+    <div class="d-flex overflow-auto">
+        {% for service in services %}
+        <form action="{{ url_for('customerhome') }}" method="POST">
+            <div class="card me-3" style="min-width: 150px; max-width: 150px; min-height: 150px; max-height: 150px;">
+                <div class="card-body">
+                    <button type="submit" name="service_asked" value="{{ service.service_type }}" class="btn btn-primary">
+                        {{ service.service_type }}
+                    </button>
+                </div>
+            </div>
+        </form>
+        {% endfor %}
+    </div>
+</div>
+<h6 class="logo">Click on service above to contact our service-provider partners located in your area</h6>
+{% endif %}
+
+<hr>
+<h3 class="logo">Service History</h3>
+<table class="table table-striped table-bordered ">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Service Name</th>
+            <th>Service Provider</th>
+            <th>Contact Number</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for servicerequest in servicerequest %}
+            <tr>
+                <td><a class="ml-1" href= "#" >{{ servicerequest.request_date }}</a></td>
+                <td>{{ servicerequest.servicedetails.service_type }}</td>
+                <td>{{ servicerequest.serviceprofessional.full_name }}</td>
+                <td>{{ servicerequest.serviceprofessional.contact }}</td>
+                <td>
+                    {% if servicerequest.service_status == 'Completed' %}
+                        <span>Done</span>
+                    {% else %}
+                    <form action="#" method="POST" style="display:inline;">
+                        <input type="hidden" name="closeserviceid" value="{{ servicerequest.id }}">
+                        <button type="submit" name="closeservice" value="closeservice" class="btn btn-warning btn-sm">Close Now</button>
+                    </form>
+                    {% endif %}
+                </td>
+                
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+
+

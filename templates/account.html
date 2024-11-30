@@ -1,0 +1,15 @@
+{% extends 'layout.html' %} 
+{% block content %}
+<div class="card justify-content-center" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">{{current_user.full_name}}</h5>
+      <h5 class="card-text">{{current_user.email}}</h5>
+      {% if current_user.role == 1 %}
+      <h5 class="card-text">You are a service consumer</h5>
+      {% else %}
+      <h5 class="card-text">You are a service provider</h5>
+      {% endif %}
+      <h5 class="card-text">{{current_user.email}}</h5>
+    </div>
+  </div>
+{% endblock %}

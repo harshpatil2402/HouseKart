@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block content %}
+<body>
+    <h3 class="logo">Professional's service request summary</h3>
+    
+        <h4>{{current_user.full_name}}'s total number of inprogress service request : {{tpr}}/{{tpr+tor+tcr}}</h4>
+        <h4>{% if tor==1 %}
+            There is a service in progress curently
+
+            {% else %}
+            You are able to accept other request
+        {% endif %}</h4>
+        <h4>{{current_user.full_name}}'s total number of service request completed  : {{tcr}}/{{tpr+tor+tcr}}</h4>
+   
+</body>
+    
+{% endblock %}

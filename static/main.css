@@ -1,0 +1,32 @@
+.form-input {
+    height: 100px;
+    width: 500px;
+    margin: auto;
+    margin-top: 0px;
+    
+}
+
+.logo{
+    display: flex;
+    justify-content: center;
+}
+
+/* .flash{
+    display: flex;
+    justify-content: center;
+    width: 100px;
+} */
+
+.login-form{
+    border: dotted rgb(0, 0, 0);
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.professional{
+    margin-left: 227px;
+}
+
+.custom-bg {
+    background-color: skyblue !important;
+}

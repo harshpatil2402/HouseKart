@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="form-input">
+    <form method="POST" action="" class="login-form d-flex justify-content-center">
+      {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+          <legend class="border-bottom mb-4">
+            {{ 'Edit Service' if service else 'Add New Service' }}
+          </legend>
+
+          <div class="form-group">
+            {{ form.service_type.label(class="form-control-label") }}
+            <br>
+            {% if form.service_type.errors %}
+            {{ form.service_type(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+            {% for error in form.service_type.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+            </div>
+            {% else %}
+            {{ form.service_type(class="form-control form-control-lg") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.service_description.label(class="form-control-label") }}
+            <br>
+            {% if form.service_description.errors %}
+            {{ form.service_description(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+            {% for error in form.service_description.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+            </div>
+            {% else %}
+            {{ form.service_description(class="form-control form-control-lg") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.base_price.label(class="form-control-label") }}
+            <br>
+            {% if form.base_price.errors %}
+            {{ form.base_price(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+            {% for error in form.base_price.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+            </div>
+            {% else %}
+            {{ form.base_price(class="form-control form-control-lg") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.time_required.label(class="form-control-label") }}
+            <br>
+            {% if form.time_required.errors %}
+            {{ form.time_required(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+            {% for error in form.time_required.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+            </div>
+            {% else %}
+            {{ form.time_required(class="form-control form-control-lg") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+          </div>
+        </fieldset>
+      </form>
+    </div>
+{% endblock %}
