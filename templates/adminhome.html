@@ -2,10 +2,10 @@
 
 {% block content %}
 <h3 class="logo">Services</h3>
-<table class="table table-bordered ">
+<table class="container table table-bordered ">
     <thead class="thead-dark">
         <tr>
-            <th>ID</th>
+            <th>Sr no</th>
             <th>Service Name</th>
             <th>Base Price(in Rs)</th>
             <th>Time Required(in hrs)</th>
@@ -15,7 +15,7 @@
     <tbody>
         {% for service in services %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ service.id }}</a></td>
+                <td><a href="{{ url_for('adminservicedetails',id=service.id) }}">{{ loop.index }}</a></td>
                 <td>{{ service.service_type }}</td>
                 <td>{{ service.base_price }}</td>
                 <td>{{ service.time_required }}</td>
@@ -30,16 +30,17 @@
         {% endfor %}
     </tbody>
 </table>
-<form action="{{ url_for('adminhome') }}" method="POST" style="display:inline;">
+<form class="container" action="{{ url_for('adminhome') }}" method="POST" >
     <button type="submit" name="action" value="addservice" class="btn btn-info btn-sm">Add a New Service</button>
 </form>
 
+
 <hr>
 <h3 class="logo">Customers</h3>
-<table class="table table-bordered">
+<table class="container table table-bordered">
     <thead class="thead-dark">
         <tr>
-            <th>ID</th>
+            <th>Sr no</th>
             <th>Name</th>
             <th>Date of account creation</th>
             <th>Contact Number</th>
@@ -50,7 +51,7 @@
     <tbody>
         {% for customer in customers %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ customer.id }}</a></td>
+                <td><a href="{{ url_for('admincustomerdetails',id=customer.id) }}">{{ loop.index }}</a></td>
                 <td>{{ customer.full_name }}</td>
                 <td>{{ customer.date_created }}</td>
                 <td>{{ customer.contact }}</td>
@@ -79,13 +80,14 @@
 
 <hr>
 <h3 class="logo">Professionals</h3>
-<table class="table table-bordered">
+<h6 class="logo">Click on service provider partner's name to view document submitted by them for verification</h6>
+<table class="container table table-bordered">
     <thead class="thead-dark">
         <tr>
-            <th>ID</th>
+            <th>Sr no</th>
             <th>Name</th>
-            <th>Experience</th>
-            <th>Service Name</th>
+            <th>Experience(In years)</th>
+            <th>Service Category</th>
             <th>Service Description</th>
             <th>Action</th>
         </tr>
@@ -93,8 +95,8 @@
     <tbody>
         {% for professional in professionals %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ professional.id }}</a></td>
-                <td>{{professional.full_name }}</td>
+                <td><a href="{{ url_for('adminprofessionaldetails',id=professional.id) }}">{{ loop.index }}</a></td>
+                <td><a class="ml-1" href= " {{ url_for('profdoc',email=professional.email )  }}" target="_blank">{{ professional.full_name }}</a></td>
                 <td>{{ professional.experience }}</td>
                 <td>{{ professional.service_type }}</td>
                 <td>{{ professional.service_description }}</td>
@@ -127,10 +129,10 @@
 </table>
 <hr>
 <h3 class="logo">Service Requests</h3>
-<table class="table table-bordered">
+<table class="container table table-bordered">
     <thead class="thead-dark">
         <tr>
-            <th>ID</th>
+            <th>Sr no</th>
             <th>Assigned Professional</th>
             <th>Customer</th>
             <th>Service Type</th>
@@ -142,7 +144,7 @@
     <tbody>
         {% for service_request in service_requests %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ service_request.id }}</a></td>
+                <td><a href="{{ url_for('adminservicerequestdetails',id=service_request.id) }}">{{ loop.index }}</a></td>
                 <td>{{ service_request.serviceprofessional.full_name }}</td>
                 <td>{{ service_request.servicecustomer.full_name }}</td>
                 <td>{{ service_request.serviceprofessional.service_type }}</td>

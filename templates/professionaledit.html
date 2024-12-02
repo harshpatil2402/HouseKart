@@ -1,14 +1,11 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="form-input">
-  <div class="border-top pt-3">
-    <small class="text-muted"><a class="ml-1" href="{{ url_for('home') }}">Already have an account? Click Here to login now</a></small>  
-    </div>
   <form method="POST" action="" class="login-form" enctype="multipart/form-data">
     {{form.hidden_tag()}}
     
       <fieldset class="form-group">
-        <legend class="mb-4">Register to provide your services</legend>
+        <legend class="mb-4">Update Account Details</legend>
       <div class="form-group">
         {{ form.email.label(class="form-control-label") }}
         <br>
@@ -23,34 +20,7 @@
         {{ form.email(class="form-control form-control-lg") }}
         {% endif %}
       </div>
-      <div class="form-group">
-        {{ form.password.label(class="form-control-label") }}
-        <br>
-        {% if form.password.errors %}
-        {{ form.password(class="form-control form-control-lg is-invalid") }}
-        <div class="invalid-feedback">
-        {% for error in form.password.errors %}
-        <span>{{ error }}</span>
-        {% endfor %}
-        </div>
-        {% else %}
-        {{ form.password(class="form-control form-control-lg") }}
-        {% endif %}
-      </div>
-      <div class="form-group">
-        {{ form.confirm_password.label(class="form-control-label") }}
-        <br>
-        {% if form.confirm_password.errors %}
-        {{ form.confirm_password(class="form-control form-control-lg is-invalid") }}
-        <div class="invalid-feedback">
-        {% for error in form.confirm_password.errors %}
-        <span>{{ error }}</span>
-        {% endfor %}
-        </div>
-        {% else %}
-        {{ form.confirm_password(class="form-control form-control-lg") }}
-        {% endif %}
-      </div>
+      
       <div class="form-group">
         {{ form.full_name.label(class="form-control-label") }}
         <br>
@@ -80,20 +50,7 @@
         {% endif %}
       </div>
 
-      <div class="form-group">
-        {{ form.service_type.label(class="form-control-label") }}
-        <br>
-        {% if form.service_type.errors %}
-        {{ form.service_type(class="form-control form-control-lg is-invalid") }}
-        <div class="invalid-feedback">
-        {% for error in form.service_type.errors %}
-        <span>{{ error }}</span>
-        {% endfor %}
-        </div>
-        {% else %}
-        {{ form.service_type(class="form-control form-control-lg") }}
-        {% endif %}
-      </div>
+      
       
       <div class="form-group">
         {{ form.service_description.label(class="form-control-label") }}
@@ -109,31 +66,7 @@
         {{ form.service_description(class="form-control form-control-lg") }}
         {% endif %}
       </div>
-      <div class="form-group">
-        {{ form.experience.label(class="form-control-label") }}
-        <br>
-        {% if form.experience.errors %}
-        {{ form.experience(class="form-control form-control-lg is-invalid") }}
-        <div class="invalid-feedback">
-        {% for error in form.experience.errors %}
-        <span>{{ error }}</span>
-        {% endfor %}
-        </div>
-        {% else %}
-        {{ form.experience(class="form-control form-control-lg") }}
-        {% endif %}
-      </div>
-
-      <div class="form-group">
-        {{ form.document.label }}
-        {{ form.document(class="form-control-file") }}
-        <br>
-        {% if form.document.errors %}
-        {% for error in errors %}
-        <span class="text-danger">{{ error }}</span>
-        {% endfor %}
-        {% endif %}
-      </div>
+     
 
       <div class="form-group">
         {{ form.address.label(class="form-control-label") }}

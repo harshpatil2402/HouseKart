@@ -27,7 +27,7 @@
             <tbody>
                 {% for service in results %}
                     <tr>
-                        <td><a class="ml-1" href= "#" >{{ service.id }}</a></td>
+                        <td>{{ loop.index }}</a></td>
                         <td>{{ service.service_type }}</td>
                         <td>{{ service.base_price }}</td>
                         <td>{{ service.time_required }}</td>

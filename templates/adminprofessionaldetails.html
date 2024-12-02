@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h3 class="logo">Professionals</h3>
+<h6 class="logo">Click on service provider partner's name to view document submitted by them for verification</h6>
+<table class="container table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Name</th>
+            <th>Experience(In years)</th>
+            <th>Service Category</th>
+            <th>Service Description</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td><a class="ml-1" href= " {{ url_for('profdoc',email=professional.email )  }}" target="_blank">{{ professional.full_name }}</a></td>
+                <td>{{ professional.experience }}</td>
+                <td>{{ professional.service_type }}</td>
+                <td>{{ professional.service_description }}</td>
+                <td>
+                    {% if ((professional.id,) in approved_professional) and ((professional.id,) not in blocked_professional) %}
+                        <form action="#" method="POST" style="display:inline;">
+                            <input type="hidden" name="professional_id" value="{{ professional.id }}">
+                            <button type="submit" name="blockprof" value="blockprof" class="btn btn-danger btn-sm">Block</button>
+                        </form>
+                    
+                        
+                    {% elif (professional.id,) in blocked_professional  %}
+                    <form action="#" method="POST" style="display:inline;">
+                        <input type="hidden" name="unblockprofessional_id" value="{{ professional.id }}">
+                        <button type="submit" name="unblockprof" value="unblockprof" class="btn btn-warning btn-sm">Unblock</button>
+                    </form>
+                    
+                    {% else %}
+                        <form action="#" method="POST" style="display:inline;">
+                            <input type="hidden" name="approve_professional_id" value="{{ professional.id }}">
+                            <button type="submit" name="profapproval" value="approve" class="btn btn-success btn-sm">Approve</button>
+                            <button type="submit" name="profapproval" value="reject" class="btn btn-warning btn-sm">Reject</button>
+                        </form>
+                    {% endif %}
+                    
+                </td>
+            </tr>
+    </tbody>
+</table>
+
+    
+{% endblock %}

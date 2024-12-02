@@ -2,16 +2,17 @@
 ##############################
 
 
-from flask import Flask, render_template, url_for, flash, redirect, request, session, Response
+from flask import Flask, render_template, url_for, flash, redirect, request, session, Response, send_from_directory, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import func
 from sqlalchemy import and_
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField,SelectField,SubmitField, EmailField, TextAreaField, FileField , IntegerField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, PasswordField,SelectField,SubmitField, EmailField, TextAreaField, IntegerField
 from wtforms.validators import NumberRange, DataRequired, Email, EqualTo, Length, Optional
 from flask_login import login_user,logout_user,login_required,current_user, LoginManager, UserMixin
-
+import os
 
 ##############################
 
@@ -24,7 +25,7 @@ app = Flask(__name__)
 # Configuring Necessary Settings
 ##############################
 
-
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
 app.config['SECRET_KEY'] = 'secretkeysecretkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -40,6 +41,11 @@ login_manager.login_message_category = 'warning'
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+import os
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])  # Create the folder if it doesn't exist
+
 
 
 
@@ -195,7 +201,21 @@ class CustomerSignupForm(FlaskForm):
 
     pincode = StringField('Pincode',validators=[DataRequired(),Length(6, 6, message="Pincode must be 6 digits.")])
 
-    submit = SubmitField('Register')
+    submit = SubmitField('Submit')
+
+#2.Customer Signup Form
+class CustomerUpdateForm(FlaskForm):
+    email = StringField('Registered Email Id',validators=[DataRequired()])
+
+    full_name = StringField('Full Name',validators=[DataRequired()],)
+
+    contact = StringField('Contact Number',validators=[DataRequired()])
+
+    address = StringField('Address',validators=[DataRequired()])
+
+    pincode = StringField('Pincode',validators=[DataRequired(),Length(6, 6, message="Pincode must be 6 digits.")])
+
+    submit = SubmitField('Submit')
 
 
 
@@ -217,13 +237,30 @@ class ProfessionalSignupForm(FlaskForm):
     
     experience = StringField('Experience',validators=[DataRequired()])
     
-    document = FileField('Document for Verification',validators=[DataRequired()])
+    document = FileField('Document for Verification',validators=[DataRequired(),FileAllowed(['jpg', 'png', 'pdf', 'jpeg'])])
     
     address = StringField('Address',validators=[DataRequired()])
     
     pincode = StringField('Pincode',validators=[DataRequired(),Length(6, 6, message="Pincode must be 6 digits.")],)
     
-    submit = SubmitField('Register')
+    submit = SubmitField('Submit')
+
+#3. Professional Signup Form
+class ProfessionalUpdateForm(FlaskForm):
+    email = StringField('Registered Email Id',validators=[DataRequired()])
+
+    full_name = StringField('Full Name',validators=[DataRequired()],)
+
+    contact = StringField('Contact Number',validators=[DataRequired()])
+    
+    service_description = TextAreaField('Service Description',validators=[DataRequired()])
+    
+    address = StringField('Address',validators=[DataRequired()])
+    
+    pincode = StringField('Pincode',validators=[DataRequired(),Length(6, 6, message="Pincode must be 6 digits.")],)
+    
+    submit = SubmitField('Submit')
+
 
 
 #4. Form for Adding/Editing New service by admin
@@ -339,10 +376,22 @@ def _():
 def profsignup():
     form=ProfessionalSignupForm()
     services = Service.query.all()  # services dropdown
-    form.service_type.choices = [(service.service_type, service.service_type) for service in services] #cant be defined before hence adding at current moment
+    form.service_type.choices = [(service.service_type, f"{service.service_type} - {service.service_description}") for service in services] #cant be defined before hence adding at current moment
 
     if form.validate_on_submit():
         try :
+            document = form.document.data
+
+            if document and document.filename != '':
+                # Extract file extension and create a filename directly using the email
+                file_extension = document.filename.rsplit('.', 1)[1].lower()  # Get file extension
+                if file_extension not in ['pdf', 'png', 'jpg', 'jpeg']:
+                    flash('Invalid file type. Please upload a PDF, PNG, JPG, or JPEG file.', 'danger')
+                    return redirect(request.url)
+
+                filename = f"{form.email.data}.{file_extension}"
+                upload_folder = app.config['UPLOAD_FOLDER']
+                
             #Getting form data and adding in Professional Table
             professional = Professional(
                 email=form.email.data,
@@ -352,13 +401,12 @@ def profsignup():
                 service_type=form.service_type.data,
                 service_description=form.service_description.data,
                 experience=form.experience.data,
-                document=form.document.data,
+                document=filename,
                 address=form.address.data,
                 pincode=form.pincode.data
             )
             db.session.add(professional)
             db.session.commit()
-
             
 
             
@@ -374,6 +422,8 @@ def profsignup():
             )
             db.session.add(user)
             db.session.commit()
+            file_path = os.path.join(upload_folder, filename)
+            document.save(file_path) 
             
             # if registered successfully, informing Professional
             flash(f'Account created for {form.full_name.data}!', 'success')
@@ -385,6 +435,7 @@ def profsignup():
 
 # if professional already exist
         except Exception as e:
+            print(e)
             flash(f'This user already exist, Please login as {form.email.data}' ,'danger')
             return redirect(url_for('home'))
     return render_template('professional_signup.html',title='SignUp as a professional',form=form,show_navbar=False)
@@ -858,7 +909,7 @@ def logout():
 @app.route('/account')
 @login_required
 def account():
-    return render_template('account.html')
+    return render_template('account.html',title='Account',show_navbar=True)
 
 
 #adding and editing services by admin
@@ -942,6 +993,202 @@ def ratings(service_request_id, professional_id):
         flash('Thank you for HouseKarting','info')
         return redirect(url_for('customerhome'))
     return render_template('ratings.html',title='Ratings',show_navbar=True,servicerequestdetails=servicerequestdetails,form=form)
+
+
+@app.route('/profdoc/<string:email>',methods=["GET","POST"])
+def profdoc(email):
+    try:
+        filename = f'{email}.pdf'
+        # Serve the file from the uploads folder
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    except FileNotFoundError:
+        abort(404)  # Return 404 if the file does not exist
+
+
+@app.route('/adminservicedetails/<int:id>',methods=['GET','POST'])
+def adminservicedetails(id):
+    print(id)
+    service = Service.query.get(id)
+    print(service)
+    action2 = request.form.get('action2')
+    # Edit/Delete Service
+    if action2:
+        if action2 == 'edit':
+            return redirect(url_for('addservice', service_id=id))
+        elif action2 == 'delete':
+            delete_service = Service.query.get(id)
+            if delete_service:
+                try:
+                    db.session.delete(delete_service)
+                    db.session.commit()
+                    flash('Service deleted successfully!', 'success')
+                    return redirect(url_for('adminhome'))
+                except Exception as e:
+                    db.session.rollback()
+                    flash('An error occurred while deleting the service.', 'danger')
+            else:
+                flash('Service not found. Unable to delete.', 'danger')
+    return render_template('adminservicedetails.html',title='Service details',show_navbar=True,service = service)
+
+@app.route('/adminprofessionaldetails/<int:id>',methods=['GET','POST'])
+def adminprofessionaldetails(id):
+    action3 = request.form.get('blockprof')
+    unblock_professional = request.form.get('unblockprof')
+    professional_approval = request.form.get("profapproval")
+    professionals = Professional.query.get(id)
+    print(professionals)
+     # Block Professional
+    if action3 == 'blockprof':
+        block_prof = Professional.query.filter_by(id=id).first()
+        if not block_prof.is_blocked:
+            block_prof.is_blocked = True
+            db.session.commit()
+            flash(f'Professional {block_prof.full_name} was blocked successfully', 'warning')
+        else:
+            flash('This Professional was already blocked', 'danger')
+        return redirect(url_for('adminhome'))
+    
+    # Unblock Professional
+    if unblock_professional == 'unblockprof':
+        unblock_prof = Professional.query.filter_by(id=id).first()
+        if  unblock_prof.is_blocked:
+            unblock_prof.is_blocked = False
+            db.session.commit()
+            flash(f'Professional {unblock_prof.full_name} was unblocked successfully', 'success')
+        else:
+            flash('This Professional is already unblocked', 'info')
+        return redirect(url_for('adminhome'))
+
+
+    # Approve/Reject Professional
+    if professional_approval:
+        if professional_approval == 'approve':
+            approve_prof = Professional.query.filter_by(id=id).first()
+            if approve_prof:
+                approve_prof.is_approved = True
+                db.session.commit()
+                flash(f'Professional {approve_prof.full_name} approved successfully', 'success')
+            else:
+                flash("Professional not found. Cannot approve.", 'danger')
+        elif professional_approval == 'reject':
+            rejected_prof = Professional.query.filter_by(id=id).first()
+            if rejected_prof:
+                db.session.delete(rejected_prof)
+                db.session.commit()
+                flash(f"Professional {rejected_prof.full_name}'s application was rejected", 'info')
+            else:
+                flash("Professional not found. Cannot reject application.", 'danger')
+        return redirect(url_for('adminhome'))
+    return render_template('adminprofessionaldetails.html',title='Professional details',show_navbar=True,professional=professionals)
+
+@app.route('/admincustomerdetails/<int:id>',methods=['GET','POST'])
+def admincustomerdetails(id):
+    customer = Customer.query.get(id)
+    block_customer = request.form.get('blockcustomer')
+    unblock_customer = request.form.get('unblockcustomer')
+    #Block Customer
+    if block_customer == 'blockcustomer':
+        block_cust = Customer.query.filter_by(id = id).first()
+        block_cust.is_blocked = True
+        db.session.commit()
+        flash(f'Customer {block_cust.full_name} was blocked','danger')
+        return redirect(url_for('adminhome'))
+    
+    #Unblock Customer 
+    if unblock_customer == 'unblockcustomer':
+        unblock_cust = Customer.query.filter_by(id = id).first()
+        unblock_cust.is_blocked = False
+        db.session.commit()
+        flash(f'Customer {unblock_cust.full_name} was unblocked','success')
+        return redirect(url_for('adminhome'))
+    return render_template('admincustomerdetails.html',title='Customer details',show_navbar=True,customer=customer)
+
+@app.route('/adminservicerequestdetails/<int:id>',methods=['GET','POST'])
+def adminservicerequestdetails(id):
+    sr=ServiceRequest.query.get(id)
+    return render_template('adminservicerequestdetails.html',title='Service request details',service_request=sr,show_navbar=True)
+
+@app.route('/customeredit/<int:cust_id>/<int:user_id>',methods=['GET','POST'])
+def customeredit(cust_id,user_id):
+    customer=Customer.query.get(cust_id)
+    user=User.query.get(user_id)
+    form=CustomerUpdateForm()
+    if form.validate_on_submit():
+        try:
+            if customer and user:
+                customer.email=form.email.data
+                customer.full_name=form.full_name.data
+                customer.contact=form.contact.data
+                customer.address=form.address.data
+                customer.pincode=form.pincode.data
+
+                user.email=form.email.data
+                user.full_name=form.full_name.data
+                user.contact=form.contact.data
+
+                print('hey2')
+
+            else:
+                pass
+            db.session.commit()
+
+
+           
+            flash(f'Account details updated!','success')
+            return redirect(url_for('customerhome'))
+        # if customer already exist
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing the service.', 'danger')
+    if customer:
+        form.email.data = customer.email
+        form.full_name.data = customer.full_name
+        form.contact.data = customer.contact
+        form.address.data = customer.address
+        form.pincode.data = customer.pincode
+
+    return render_template('customeredit.html',show_navbar=True,title='Customer-Edit',form=form)
+
+@app.route('/professionaledit/<int:prof_id>/<int:user_id>',methods=['GET','POST'])
+def professionaledit(prof_id,user_id):
+    professional=Professional.query.get(prof_id)
+    user=User.query.get(user_id)
+    form=ProfessionalUpdateForm()
+    if form.validate_on_submit():
+        try:
+            if professional and user:
+                professional.email=form.email.data
+                professional.full_name=form.full_name.data
+                professional.contact=form.contact.data
+                professional.service_description=form.service_description.data
+                professional.address=form.address.data
+                professional.pincode=form.pincode.data
+
+                user.email=form.email.data
+                user.full_name=form.full_name.data
+                user.contact=form.contact.data
+
+            else:
+                pass
+            db.session.commit()
+
+
+           
+            flash(f'Account details updated!','success')
+            return redirect(url_for('professionalhome'))
+        # if customer already exist
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing the service.', 'danger')
+    if professional:
+        form.email.data = professional.email
+        form.full_name.data = professional.full_name
+        form.contact.data = professional.contact
+        form.service_description.data=professional.service_description
+        form.address.data = professional.address
+        form.pincode.data = professional.pincode
+
+    return render_template('professionaledit.html',show_navbar=True,title='Professional-Edit',form=form)
 
 
 if __name__ == '__main__':

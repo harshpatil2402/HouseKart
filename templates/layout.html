@@ -26,8 +26,10 @@
     {% if show_navbar %}
     <nav class="navbar navbar-expand-lg navbar-light custom-bg">
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        {% if (current_user.role == 1) or (current_user.role == 2) %}
-          <a href="{{url_for('account')}}"> {{ current_user.full_name }} </a>
+        {% if current_user.role == 2 %}
+        <a href="{{ url_for('professionaledit',prof_id=current_user.professional_id,user_id=current_user.id ) }}"> {{ current_user.full_name }} </a>
+        {% elif current_user.role == 1 %}
+          <a href="{{ url_for('customeredit',cust_id=current_user.customer_id,user_id=current_user.id ) }}"> {{ current_user.full_name }} </a>
         {% else %}
         <h6>Admin </h6>
         {% endif %}

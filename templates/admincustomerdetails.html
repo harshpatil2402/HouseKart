@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h3 class="logo">Customers</h3>
+<table class="container table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Name</th>
+            <th>Date of account creation</th>
+            <th>Contact Number</th>
+            <th>address</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>{{ customer.full_name }}</td>
+                <td>{{ customer.date_created }}</td>
+                <td>{{ customer.contact }}</td>
+                <td>{{ customer.address }}</td>
+                <td>
+                    {% if ((customer.id,) not in blocked_customer) %}
+                        <form action="#" method="POST" style="display:inline;">
+                            <input type="hidden" name="customer_id" value="{{ customer.id }}">
+                            <button type="submit" name="blockcustomer" value="blockcustomer" class="btn btn-danger btn-sm">Block</button>
+                        </form>
+                    
+                        
+                    {% elif ((customer.id,) in blocked_customer) %}
+                    <form action="#" method="POST" style="display:inline;">
+                        <input type="hidden" name="unblock_customer_id" value="{{ customer.id }}">
+                        <button type="submit" name="unblockcustomer" value="unblockcustomer" class="btn btn-warning btn-sm">Unblock</button>
+                    </form>
+                        
+                    {% endif %}
+                    
+                </td>
+            </tr>
+    </tbody>
+</table>
+
+{% endblock %}

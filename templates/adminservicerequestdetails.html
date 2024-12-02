@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h3 class="logo">Service Requests</h3>
+<table class="container table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Assigned Professional</th>
+            <th>Customer</th>
+            <th>Service Type</th>
+            <th>Service Description</th>
+            <th>Request Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>{{ service_request.serviceprofessional.full_name }}</td>
+                <td>{{ service_request.servicecustomer.full_name }}</td>
+                <td>{{ service_request.serviceprofessional.service_type }}</td>
+                <td>{{ service_request.serviceprofessional.service_description }}</td>
+                <td>{{ service_request.request_date }}</td>
+                <td>{{ service_request.service_status }}</td>
+                
+            </tr>
+    </tbody>
+</table>
+
+    
+{% endblock %}
