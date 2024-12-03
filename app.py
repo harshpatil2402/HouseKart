@@ -190,7 +190,7 @@ class LoginForm(FlaskForm):
 
 #2.Customer Signup Form
 class CustomerSignupForm(FlaskForm):
-    email = StringField('Registered Email Id',validators=[DataRequired()])
+    email = StringField('Register Email Id',validators=[DataRequired()])
 
     password = PasswordField('Password',validators=[DataRequired(),])
 
@@ -224,7 +224,7 @@ class CustomerUpdateForm(FlaskForm):
 
 #3. Professional Signup Form
 class ProfessionalSignupForm(FlaskForm):
-    email = StringField('Registered Email Id',validators=[DataRequired()])
+    email = StringField('Register Email Id',validators=[DataRequired()])
 
     password = PasswordField('Password',validators=[DataRequired(),Length(min=6, message="Password must be at least 6 characters long.")],)
 
@@ -295,7 +295,7 @@ class Ratings(FlaskForm):
 # Creating Database
 ##############################
 with app.app_context():
-    #db.drop_all() #for development purpose
+    db.drop_all() #for development purpose
     db.create_all()
 ##############################
 
@@ -438,7 +438,6 @@ def profsignup():
 
 # if professional already exist
         except Exception as e:
-            print(e)
             flash(f'This user already exist, Please login as {form.email.data}' ,'danger')
             return redirect(url_for('home'))
     return render_template('professional_signup.html',title='SignUp as a professional',form=form,show_navbar=False)
@@ -980,7 +979,6 @@ def adminsummary():
     tcr = len(ServiceRequest.query.filter_by(service_status='Completed').all())
     tor = len(ServiceRequest.query.filter_by(service_status='Open').all())
     query_result = (db.session.query(Professional, Service.base_price, func.coalesce(func.avg(ServiceReview.ratings), 0).label('avg_rating')).join(Service, Professional.service_type == Service.service_type).outerjoin(ServiceRequest, and_(Professional.id == ServiceRequest.professional_id,ServiceRequest.service_status != 'rejected')).outerjoin(ServiceReview, ServiceRequest.id == ServiceReview.service_request_id).group_by(Professional, Service.base_price).all())
-    print(query_result)
     return render_template('adminsummary.html',title='Admin-Summary',show_navbar=True,tpr=tpr,tcr=tcr,tor=tor,query_result=query_result)
 
 @app.route('/customersummary')
@@ -1032,9 +1030,7 @@ def profdoc(email):
 
 @app.route('/adminservicedetails/<int:id>',methods=['GET','POST'])
 def adminservicedetails(id):
-    print(id)
     service = Service.query.get(id)
-    print(service)
     action2 = request.form.get('action2')
     # Edit/Delete Service
     if action2:
@@ -1061,7 +1057,6 @@ def adminprofessionaldetails(id):
     unblock_professional = request.form.get('unblockprof')
     professional_approval = request.form.get("profapproval")
     professionals = Professional.query.get(id)
-    print(professionals)
      # Block Professional
     if action3 == 'blockprof':
         block_prof = Professional.query.filter_by(id=id).first()
@@ -1151,7 +1146,6 @@ def customeredit(cust_id,user_id):
                 user.full_name=form.full_name.data
                 user.contact=form.contact.data
 
-                print('hey2')
 
             else:
                 pass

@@ -78,7 +78,7 @@
                     {% if servicerequest.service_status == 'Completed' %}
                         <span>Done</span>
                         
-                    {% elif (servicerequest.id,) in rejectedservice %}
+                    {% elif ((servicerequest.id,) in rejectedservice) %}
                     <span class="text-danger">Rejected by professional</span>
                    
                     {% else %}
