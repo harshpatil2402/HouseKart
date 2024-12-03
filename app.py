@@ -295,7 +295,7 @@ class Ratings(FlaskForm):
 # Creating Database
 ##############################
 with app.app_context():
-    db.drop_all() #for development purpose
+    #db.drop_all() #for development purpose
     db.create_all()
 ##############################
 
