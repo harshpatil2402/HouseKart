@@ -27,53 +27,67 @@
     <nav class="navbar navbar-expand-lg navbar-light custom-bg">
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         {% if current_user.role == 2 %}
-        <a href="{{ url_for('professionaledit',prof_id=current_user.professional_id,user_id=current_user.id ) }}"> {{ current_user.full_name }} </a>
+        <h6 class="nav-item" style="display: flex ;align-items: center;">Welcome {{ current_user.full_name }} </h6>
         {% elif current_user.role == 1 %}
-          <a href="{{ url_for('customeredit',cust_id=current_user.customer_id,user_id=current_user.id ) }}"> {{ current_user.full_name }} </a>
+          <h6 class="nav-item">Welcome {{ current_user.full_name }} </h6>
         {% else %}
-        <h6>Admin </h6>
+        <h6 class="nav-item">Welcome Admin </h6>
         {% endif %}
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active">
             {% if current_user.role == 1 %}
-            <a class="nav-link" href="{{ url_for('customerhome') }}">Home <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('customerhome') }}"> 🏠︎-Home <span class="sr-only"></span></a>
             
               
             {% elif current_user.role == 2 %}
-            <a class="nav-link" href="{{ url_for('professionalhome') }}">Home <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('professionalhome') }}"> 🏠︎-Home <span class="sr-only"></span></a>
               
             {% else %}
-            <a class="nav-link" href="{{ url_for('adminhome') }}">Home <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('adminhome') }}"> 🏠︎-Home <span class="sr-only"></span></a>
             {% endif %}
           </li>
           <li class="nav-item active">
             {% if current_user.role == 1 %}
-            <a class="nav-link" href="{{ url_for('customersearch') }}">Search <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('customersearch') }}"> ⌕-Search <span class="sr-only"></span></a>
             {% elif current_user.role == 2 %}
-            <a class="nav-link" href="{{ url_for('professionalsearch') }}">Search <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('professionalsearch') }}"> ⌕-Search <span class="sr-only"></span></a>
             {% else %}
-            <a class="nav-link" href="{{ url_for('adminsearch') }}">Search <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('adminsearch') }}"> ⌕-Search <span class="sr-only"></span></a>
             {% endif %}
           </li>
     
           <li class="nav-item active">
             {% if current_user.role == 1 %}
-            <a class="nav-link" href="{{ url_for('customersummary') }}">Summary <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('customersummary') }}">🧾-Summary <span class="sr-only"></span></a>
             {% elif current_user.role == 2 %}
-            <a class="nav-link" href="{{ url_for('professionalsummary') }}">Summary <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('professionalsummary') }}">🧾-Summary <span class="sr-only"></span></a>
             {% else %}
-            <a class="nav-link" href="{{ url_for('adminsummary') }}">Summary <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('adminsummary') }}">🧾-Summary <span class="sr-only"></span></a>
+            {% endif %}
+          </li>
+
+          <li class="nav-item active">
+            {% if current_user.role == 1 %}
+            <a class="nav-link" href="{{ url_for('customeredit',cust_id=current_user.customer_id,user_id=current_user.id ) }}"> ✎-Edit Profile  </a>
+            
+              
+            {% elif current_user.role == 2 %}
+            <a class="nav-link" href="{{ url_for('professionaledit',prof_id=current_user.professional_id,user_id=current_user.id ) }}"> ✎-Edit Profile </a>
+              
+            {% else %}
+            
             {% endif %}
           </li>
     
     
           <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('logout') }}">Logout <span class="sr-only"></span></a>
+            <a class="nav-link" href="{{ url_for('logout') }}">⤷-Logout <span class="sr-only"></span></a>
           </li>
         </ul>
       </div>
     </nav>
-    
+
+    <br>
       
     {% endif %}
     {% block content %}{% endblock %}

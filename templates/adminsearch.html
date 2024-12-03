@@ -61,7 +61,7 @@
             <tbody>
                 {% for customer in results %}
                     <tr>
-                        <td><a class="ml-1" href= "#" >{{ customer.id }}</a></td>
+                        <td>{{ loop.index }}</td>
                         <td>{{ customer.full_name }}</td>
                         <td>{{ customer.date_created }}</td>
                         <td>{{ customer.contact }}</td>
@@ -101,7 +101,7 @@
             <tbody>
                 {% for professional in results %}
                     <tr>
-                        <td><a class="ml-1" href= "#" >{{ professional.id }}</a></td>
+                        <td><a class="ml-1" href= " {{ url_for('profdoc',email=professional.email )  }}" target="_blank" >{{ professional.id }}</a></td>
                         <td>{{professional.full_name }}</td>
                         <td>{{ professional.experience }}</td>
                         <td>{{ professional.service_type }}</td>

@@ -2,11 +2,39 @@
 {% block content %}
 <body>
     <h3 class="logo">Admin service request summary</h3>
-    
+        <div class="container">
         <h4>Total number of inprogress service request : {{tpr}}/{{tpr+tor+tcr}}</h4>
         <h4>Total number of service request to be accepted by professionals : {{tor}}/{{tpr+tor+tcr}}</h4>
         <h4>Total number of completed service request : {{tcr}}/{{tpr+tor+tcr}}</h4>
-   
+            <br>
+            <hr>
+        <h3 class="logo">Service professional's average rating </h3>
+<table class="container table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Sr no</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Service Category</th>
+            <th>Address</th>
+            <th>Average Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a,b,c in query_result %}
+            <tr>
+                <td><a href="{{ url_for('adminprofessionaldetails',id=a.id) }}">{{ loop.index }}</a></td>
+                <td>{{ a.full_name }}</td>
+                <td>{{ a.email}}</td>
+                <td>{{ a.service_type }}</td>
+                <td>{{ a.address }}</td>
+                <td>{{ c }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+            
+    </div>
 </body>
     
 {% endblock %}

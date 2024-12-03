@@ -30,3 +30,7 @@
 .custom-bg {
     background-color: skyblue !important;
 }
+
+h6.nav-item {
+    margin: 0;
+}

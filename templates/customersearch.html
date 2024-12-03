@@ -32,7 +32,7 @@
     <tbody>
         {% for result in results %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ result.profess }}</a></td>
+                <td>{{ loop.index }}</td>
                 <td>{{ result.service_description }}</td>
                 <td>{{ result.base_price }}</td>
                 <td>{{ result.average_rating }}</td>

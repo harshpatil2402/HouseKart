@@ -7,7 +7,7 @@
 <table class="table table-striped table-bordered ">
     <thead class="thead-dark">
         <tr>
-            <th>ID</th>
+            <th>Sr no</th>
             <th>Service Description</th>
             <th>Base Price</th>
             <th>Ratings</th>
@@ -17,7 +17,7 @@
     <tbody>
         {% for professional, base_price, avg_rating in query_result %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ professional.full_name }}</a></td>
+                <td>{{ loop.index }}</td>
                 <td>{{ professional.service_description }}</td>
                 <td>{{ base_price }}</td>
                 <td>{{ avg_rating }}</td>
@@ -35,6 +35,7 @@
 {% else %}
 <div class="container mt-4">
     <h2 class="logo">Are you looking for any of the following service today ?</h2>
+    <br>
     <div class="d-flex overflow-auto">
         {% for service in services %}
         <form action="{{ url_for('customerhome') }}" method="POST">
@@ -49,7 +50,9 @@
         {% endfor %}
     </div>
 </div>
+<br>
 <h6 class="logo">Click on service above to contact our service-provider partners located in your area</h6>
+<br>
 {% endif %}
 
 <hr>
@@ -57,7 +60,7 @@
 <table class="table table-striped table-bordered ">
     <thead class="thead-dark">
         <tr>
-            <th>ID</th>
+            <th>Sr no</th>
             <th>Service Name</th>
             <th>Service Provider</th>
             <th>Contact Number</th>
@@ -67,7 +70,7 @@
     <tbody>
         {% for servicerequest in servicerequest %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ servicerequest.request_date }}</a></td>
+                <td>{{ loop.index }}</td>
                 <td>{{ servicerequest.servicedetails.service_type }}</td>
                 <td>{{ servicerequest.serviceprofessional.full_name }}</td>
                 <td>{{ servicerequest.serviceprofessional.contact }}</td>

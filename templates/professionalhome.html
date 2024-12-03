@@ -4,6 +4,7 @@
 <table class="table table-striped table-bordered ">
     <thead class="thead-dark">
         <tr>
+            <th>Sr no</th>
             <th>Requested Date</th>
             <th>Customer Name</th>
             <th>Contact Number</th>
@@ -15,7 +16,8 @@
     <tbody>
         {% for servicerequest in servicerequest %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ servicerequest.request_date }}</a></td>
+                <td>{{ loop.index }}</td>
+                <td>{{ servicerequest.request_date }}</td>
                 <td>{{ servicerequest.servicecustomer.full_name }}</td>
                 <td>{{ servicerequest.servicecustomer.contact }}</td>
                 <td>{{ servicerequest.servicecustomer.address }}</td>
@@ -45,7 +47,6 @@
 <table class="table table-striped table-bordered ">
     <thead class="thead-dark">
         <tr>
-            <th>ID</th>
             <th>Customer Name</th>
             <th>Contact Number</th>
             <th>Address</th>
@@ -55,7 +56,6 @@
     <tbody>
         {% for currentservicerequest in currentservicerequest %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ currentservicerequest.id }}</a></td>
                 <td>{{ currentservicerequest.servicecustomer.full_name }}</td>
                 <td>{{ currentservicerequest.servicecustomer.contact }}</td>
                 <td>{{ currentservicerequest.servicecustomer.address }}</td>
@@ -69,7 +69,7 @@
 <table class="table table-striped table-bordered ">
     <thead class="thead-dark">
         <tr>
-            <th>ID</th>
+            <th>Sr no</th>
             <th>Customer Name</th>
             <th>Contact Number</th>
             <th>Address</th>
@@ -80,7 +80,7 @@
     <tbody>
         {% for servicerequestclose in servicerequestclose %}
             <tr>
-                <td><a class="ml-1" href= "#" >{{ servicerequestclose.id }}</a></td>
+                <td>{{ loop.index }}</td>
                 <td>{{ servicerequestclose.servicecustomer.full_name }}</td>
                 <td>{{ servicerequestclose.servicecustomer.contact }}</td>
                 <td>{{ servicerequestclose.servicecustomer.address }}</td>

@@ -80,7 +80,8 @@
 
 <hr>
 <h3 class="logo">Professionals</h3>
-<h6 class="logo">Click on service provider partner's name to view document submitted by them for verification</h6>
+<h6 class="logo" style='color: crimson;'>Click on service provider partner's name to view document submitted by them for verification</h6>
+<a class="logo" href="{{ url_for('adminsummary' ) }}">Average rating for each professional</a>
 <table class="container table table-bordered">
     <thead class="thead-dark">
         <tr>
@@ -150,7 +151,13 @@
                 <td>{{ service_request.serviceprofessional.service_type }}</td>
                 <td>{{ service_request.serviceprofessional.service_description }}</td>
                 <td>{{ service_request.request_date }}</td>
-                <td>{{ service_request.service_status }}</td>
+                {% if service_request.service_status=='Open' %}
+                <td style="color: red;">{{ service_request.service_status }}</td>
+                {% elif service_request.service_status=='Pending' %}
+                <td style="color: darkgoldenrod;">{{ service_request.service_status }}</td>
+                {% elif service_request.service_status=='Completed' %}
+                <td style="color: green;">{{ service_request.service_status }}</td>
+                {% endif %}
                 
             </tr>
         {% endfor %}

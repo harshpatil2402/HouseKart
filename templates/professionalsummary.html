@@ -2,16 +2,17 @@
 {% block content %}
 <body>
     <h3 class="logo">Professional's service request summary</h3>
-    
+    <div class="container">
         <h4>{{current_user.full_name}}'s total number of inprogress service request : {{tpr}}/{{tpr+tor+tcr}}</h4>
-        <h4>{% if tor==1 %}
+        <h4>{% if tpr == 1 %}
             There is a service in progress curently
 
-            {% else %}
+            {% elif tpr == 0 %}
             You are able to accept other request
         {% endif %}</h4>
         <h4>{{current_user.full_name}}'s total number of service request completed  : {{tcr}}/{{tpr+tor+tcr}}</h4>
-   
-</body>
+        <h4>Your average rating up to date : {{ avg_rating }}</h4>
+    </div>
+    </body>
     
 {% endblock %}

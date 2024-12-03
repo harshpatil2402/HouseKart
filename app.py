@@ -14,6 +14,7 @@ from wtforms.validators import NumberRange, DataRequired, Email, EqualTo, Length
 from flask_login import login_user,logout_user,login_required,current_user, LoginManager, UserMixin
 import os
 
+
 ##############################
 
 #Instatiating a Flask class object and Sqlalchemy object
@@ -311,7 +312,7 @@ def home():
     form = LoginForm()
     if form.validate_on_submit():
         if form.email.data == 'admin@housekart.in' and form.password.data == 'housekart':
-            flash('Welcome Admin', 'success')
+            #flash('Welcome Admin', 'success')
             return redirect(url_for('adminhome'))
 
         # Retrieve the user
@@ -484,7 +485,7 @@ def adminhome():
     blocked_professional = Professional.query.filter_by(is_blocked=True).with_entities(Professional.id).all()
     customers = Customer.query.all()
     blocked_customer = Customer.query.filter_by(is_blocked=True).with_entities(Customer.id).all()
-    service_requests = ServiceRequest.query.all()
+    service_requests = ServiceRequest.query.order_by(ServiceRequest.service_status.desc()).all()
 
 
 #gwtting all actions clicked by admin
@@ -734,7 +735,7 @@ def adminsearch():
 def customerhome():  
     customer = Customer.query.filter_by(email=current_user.email).first()  
     customer_id = customer.id  
-    servicerequest = ServiceRequest.query.filter_by(customer_id=customer_id)  
+    servicerequest = ServiceRequest.query.filter_by(customer_id=customer_id).order_by(ServiceRequest.service_status.desc())  
     clicked_button = request.form.get('service_asked')  
     bookservice = request.form.get('bookservice')  
     professional_book_id = request.form.get('professional_book_id')  
@@ -765,8 +766,21 @@ def customerhome():
     # View services to book  
     query_result = []  
     if clicked_button:  
-        query_result = (db.session.query(Professional, Service.base_price, func.coalesce(func.avg(ServiceReview.ratings), 0).label('avg_rating')).join(Service, Professional.service_type == Service.service_type).outerjoin(ServiceRequest, and_(Professional.id == ServiceRequest.professional_id,ServiceRequest.service_status != 'rejected')).outerjoin(ServiceReview, ServiceRequest.id == ServiceReview.service_request_id).group_by(Professional, Service.base_price).all())  
-#this query gets a list of professionals with the base price of their services and its avg rating. 
+        query_result = (
+        db.session.query(
+            Professional,
+            Service.base_price,
+            func.coalesce(func.avg(ServiceReview.ratings), 0).label('avg_rating')
+        )
+        .join(
+            Service,
+            and_(Professional.service_type == Service.service_type, Service.service_type == clicked_button)  # Filter by clicked_button
+        )
+        .outerjoin(ServiceRequest, and_(Professional.id == ServiceRequest.professional_id, ServiceRequest.service_status != 'rejected'))
+        .outerjoin(ServiceReview, ServiceRequest.id == ServiceReview.service_request_id)
+        .group_by(Professional, Service.base_price)
+        .all()
+    )#this query gets a list of professionals with the base price of their services and its avg rating. 
 #joins the Professional table with the Service table based on service type, and optionally joins 
 #ServiceRequest and ServiceReview tables to include requests (excluding rejected ones) and associated reviews.
 #The average rating is calculated using `func.avg`, defaulting to 0 if no ratings exist, and results are grouped by professiona.
@@ -961,7 +975,9 @@ def adminsummary():
     tpr = len(ServiceRequest.query.filter_by(service_status='Pending').all())
     tcr = len(ServiceRequest.query.filter_by(service_status='Completed').all())
     tor = len(ServiceRequest.query.filter_by(service_status='Open').all())
-    return render_template('adminsummary.html',title='Admin-Summary',show_navbar=True,tpr=tpr,tcr=tcr,tor=tor)
+    query_result = (db.session.query(Professional, Service.base_price, func.coalesce(func.avg(ServiceReview.ratings), 0).label('avg_rating')).join(Service, Professional.service_type == Service.service_type).outerjoin(ServiceRequest, and_(Professional.id == ServiceRequest.professional_id,ServiceRequest.service_status != 'rejected')).outerjoin(ServiceReview, ServiceRequest.id == ServiceReview.service_request_id).group_by(Professional, Service.base_price).all())
+    print(query_result)
+    return render_template('adminsummary.html',title='Admin-Summary',show_navbar=True,tpr=tpr,tcr=tcr,tor=tor,query_result=query_result)
 
 @app.route('/customersummary')
 @login_required
@@ -970,6 +986,7 @@ def customersummary():
     tpr = len(ServiceRequest.query.filter_by(customer_id = id,service_status='Pending').all())
     tcr = len(ServiceRequest.query.filter_by(customer_id = id,service_status='Completed').all())
     tor = len(ServiceRequest.query.filter_by(customer_id = id,service_status='Open').all())
+    
     return render_template('customersummary.html',title='Customer-Summary',show_navbar=True,tpr=tpr,tcr=tcr,tor=tor)
 
 @app.route('/professionalsummary')
@@ -979,7 +996,11 @@ def professionalsummary():
     tpr = len(ServiceRequest.query.filter_by(professional_id = id,service_status='Pending').all())
     tcr = len(ServiceRequest.query.filter_by(professional_id = id,service_status='Completed').all())
     tor = len(ServiceRequest.query.filter_by(professional_id = id,service_status='Open').all())
-    return render_template('professionalsummary.html',title='Professional-Summary',show_navbar=True,tpr=tpr,tcr=tcr,tor=tor)
+    query_result = (db.session.query(Professional, Service.base_price, func.coalesce(func.avg(ServiceReview.ratings), 0).label('avg_rating')).join(Service, Professional.service_type == Service.service_type).outerjoin(ServiceRequest, and_(Professional.id == ServiceRequest.professional_id,ServiceRequest.service_status != 'rejected')).outerjoin(ServiceReview, ServiceRequest.id == ServiceReview.service_request_id).group_by(Professional, Service.base_price).all())
+    for a,_,c in query_result:
+        if a.email == current_user.email :
+            avg_rating = c
+    return render_template('professionalsummary.html',title='Professional-Summary',show_navbar=True,tpr=tpr,tcr=tcr,tor=tor,avg_rating=avg_rating)
 
 @app.route('/ratings')
 @app.route('/ratings/<int:service_request_id>/<int:professional_id>', methods=['GET', 'POST'])
