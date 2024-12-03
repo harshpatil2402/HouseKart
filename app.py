@@ -15,6 +15,8 @@ from flask_login import login_user,logout_user,login_required,current_user, Logi
 import os
 
 
+
+
 ##############################
 
 #Instatiating a Flask class object and Sqlalchemy object
@@ -742,6 +744,8 @@ def customerhome():
     service_book_type = request.form.get('service_book_type') 
     closeserviceid = request.form.get('closeserviceid')
     closeservice = request.form.get('closeservice') 
+    rejectedservice = RejectedServiceRequest.query.with_entities(RejectedServiceRequest.id).all()
+    
 
     curr_id = current_user.email  
     #cust_pincode = Customer.query.filter_by(email=curr_id).first().pincode  
@@ -799,7 +803,7 @@ def customerhome():
 
        
 
-    return render_template('customerhome.html',title='Customer-Home',show_navbar=True,services=services,servicerequest=servicerequest,clicked_button=clicked_button,query_result=query_result)  
+    return render_template('customerhome.html',title='Customer-Home',rejectedservice=rejectedservice,show_navbar=True,services=services,servicerequest=servicerequest,clicked_button=clicked_button,query_result=query_result)  
     
     
 
@@ -1210,7 +1214,6 @@ def professionaledit(prof_id,user_id):
         form.pincode.data = professional.pincode
 
     return render_template('professionaledit.html',show_navbar=True,title='Professional-Edit',form=form)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
